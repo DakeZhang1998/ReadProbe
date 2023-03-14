@@ -19,6 +19,7 @@ we should filter out certain black-list words and check the language
 users can indicate if they like the generated questions.
 - [ ] Ask friends to try this web app and provide feedback.
 - [ ] Make sure the API key is provided in the cloud app, not in this repo.
+- [ ] Log histories (input, output, feedback) into a online database.
 
 ## Q&A
 1. How to run this project on my local machine? \
