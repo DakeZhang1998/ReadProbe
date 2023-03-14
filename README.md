@@ -17,6 +17,7 @@ we should filter out certain black-list words and check the language
 (English only).
 - [ ] For each generated question, there should be a "like" button so that
 users can indicate if they like the generated questions.
+- [ ] Ask friends to try this web app and provide feedback.
 
 ## Q&A
 1. How to run this project on my local machine? \
