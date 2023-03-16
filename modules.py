@@ -73,7 +73,8 @@ def summarize(question: str, document: str):
         messages=[
             {'role': 'system', 'content': 'You are an AI assistant to help users read and summarize documents to '
                                           'answer the question. Your answer should be no more than 100 words. '
-                                          'Your answer should be concise and easy to understand.'},
+                                          'Your answer should be concise and easy to understand. Your output should be '
+                                          'plaintext.'},
             {'role': 'user', 'content': f'My answer is {question}. Please summarize the following documents to '
                                         f'answer my question.\n------\n{document[:10000]}'}
         ],
@@ -88,6 +89,15 @@ def summarize(question: str, document: str):
 #     # This function takes as input a pair of question and document to produce
 #     # a short summary to answer the question using the information in the document.
 #     st.balloons()
+
+
+def refresh(top_n: int):
+    if 'generated' in st.session_state:
+        st.session_state.generated = 0
+    for i in range(top_n):
+        if f'question_{i}_feedback' in st.session_state:
+            st.session_state[f'question_{i}_feedback'] = 0
+    st.cache_data.clear()
 
 
 if __name__ == '__main__':

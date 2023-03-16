@@ -33,15 +33,14 @@ with col1:
 with col6:
     refresh_button = st.button(':arrows_counterclockwise: &nbsp; Refresh')
 
+
 if refresh_button:
-    if 'generated' in st.session_state:
-        st.session_state.generated = 0
-    for i in range(top_n):
-        if f'question_{i}_feedback' in st.session_state:
-            st.session_state[f'question_{i}_feedback'] = 0
-    st.cache_data.clear()
+    modules.refresh(top_n=top_n)
+
 
 if probe_button or st.session_state.generated == 1:
+    if probe_button and st.session_state.generated == 1:
+        modules.refresh(top_n=top_n)
     if len(input_text.strip()) == 0:
         st.warning('Please input your text.')
     else:
