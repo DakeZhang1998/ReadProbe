@@ -5,6 +5,7 @@ from typing import List
 from bs4 import BeautifulSoup
 
 
+@st.cache_data(show_spinner=False)
 def bing_search(query, top_n=3):
     # This function takes as input a query and
     # return a list containing Bing search results (top n) for the query.
@@ -27,16 +28,25 @@ def bing_search(query, top_n=3):
     return return_list
 
 
+@st.cache_data(show_spinner=False)
 def generate_questions(input_text: str):
     # This function calls OpenAI APIs to generate a list of questions
     # based on the input text given by the user.
     return ['What is ReadProbe?', 'How should I use ReadProbe?', 'How does ReadProbe work?']
 
 
+@st.cache_data(show_spinner=False)
 def summarize(question: str, document: str):
     # This function takes as input a pair of question and document to produce
     # a short summary to answer the question using the information in the document.
     return 'Summary produced by ChatGPT.'
+
+
+# @st.cache_data(show_spinner=False)
+# def log_data(action: str):
+#     # This function takes as input a pair of question and document to produce
+#     # a short summary to answer the question using the information in the document.
+#     st.balloons()
 
 
 if __name__ == '__main__':
