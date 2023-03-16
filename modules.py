@@ -1,5 +1,5 @@
-import re
 import openai
+import logging
 import requests
 import streamlit as st
 from bs4 import BeautifulSoup
@@ -18,16 +18,22 @@ def bing_search(query, top_n=3):
                             params={'q': query, 'textDecorations': True, 'textFormat': "HTML"})
     response.raise_for_status()
     search_results = response.json()
-    for result in search_results['webPages']['value'][:top_n]:
+    for result in search_results['webPages']['value']:
         result_response = requests.get(result['url'])
-        soup = BeautifulSoup(result_response.content, 'html.parser')
-        text = soup.find('body').get_text()
-        clean_text = ''
-        for line in text.split('\n'):
-            clean_line = line.strip()
-            if len(clean_line.split(' ')) > 3:
-                clean_text += f'{clean_line}\n'
+        try:
+            soup = BeautifulSoup(result_response.content, 'html.parser')
+            text = soup.find('body').get_text()
+            clean_text = ''
+            for line in text.split('\n'):
+                clean_line = line.strip()
+                if len(clean_line.split(' ')) > 3:
+                    clean_text += f'{clean_line}\n'
+        except AttributeError as e:
+            print(f'[INFO] Skipped one URL [{result["url"]}] with error {e}.')
+            continue
         return_list.append([result['url'], clean_text])
+        if len(return_list) > top_n:
+            break
     return return_list
 
 
