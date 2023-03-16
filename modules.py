@@ -1,8 +1,11 @@
+import re
 import openai
 import requests
 import streamlit as st
-from typing import List
 from bs4 import BeautifulSoup
+
+
+openai.api_key = st.secrets.openai_keys.key
 
 
 @st.cache_data(show_spinner=False)
@@ -32,7 +35,27 @@ def bing_search(query, top_n=3):
 def generate_questions(input_text: str):
     # This function calls OpenAI APIs to generate a list of questions
     # based on the input text given by the user.
-    return ['What is ReadProbe?', 'How should I use ReadProbe?', 'How does ReadProbe work?']
+    completion = openai.ChatCompletion.create(
+        model='gpt-3.5-turbo',
+        messages=[
+            {'role': 'system', 'content': 'You are an AI assistant to help users perform the task of lateral reading. '
+                                          'You will be given a piece of text. Your task is to raise atomic, simple, '
+                                          'factoid questions that users may ask when reading the text. The questions '
+                                          'should not be too complicated and should be suitable to be used as queries '
+                                          'to a search engine like Bing. Your questions will motivate users to search '
+                                          'for relevant documents to better understand the given text.'},
+            {'role': 'user', 'content': f'{input_text}\n------\n'
+                                        f'Please come up with the three most critical background questions.'}
+        ],
+        temperature=0.8,
+    )
+    response = completion['choices'][0]['message']['content']
+    questions = []
+    for line in response.split('\n'):
+        question = line.strip()
+        if len(question) > 5:
+            questions.append(question[3:])
+    return questions
 
 
 @st.cache_data(show_spinner=False)
@@ -51,5 +74,7 @@ def summarize(question: str, document: str):
 
 if __name__ == '__main__':
     # This part is used for testing functions in this file.
-    results = bing_search('hello?')
+    results = generate_questions('The US Coast Guard has failed to use its power to prevent and punish sexual assault '
+                                 'and misconduct for decades — despite growing evidence that this kind of behavior is '
+                                 'a longstanding problem at sea.')
     print('here')
