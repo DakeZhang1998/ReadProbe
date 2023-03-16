@@ -26,13 +26,13 @@ def bing_search(query, top_n=3):
             clean_text = ''
             for line in text.split('\n'):
                 clean_line = line.strip()
-                if len(clean_line.split(' ')) >= 3:
+                if len(clean_line.split(' ')) > 3:
                     clean_text += f'{clean_line}\n'
         except AttributeError as e:
             print(f'[INFO] Skipped one URL [{result["url"]}] with error {e}.')
             continue
         return_list.append([result['url'], clean_text])
-        if len(return_list) > top_n:
+        if len(return_list) >= top_n:
             break
     return return_list
 
@@ -68,7 +68,19 @@ def generate_questions(input_text: str):
 def summarize(question: str, document: str):
     # This function takes as input a pair of question and document to produce
     # a short summary to answer the question using the information in the document.
-    return document
+    completion = openai.ChatCompletion.create(
+        model='gpt-3.5-turbo',
+        messages=[
+            {'role': 'system', 'content': 'You are an AI assistant to help users read and summarize documents to '
+                                          'answer the question. Your answer should be no more than 100 words. '
+                                          'Your answer should be concise and easy to understand.'},
+            {'role': 'user', 'content': f'My answer is {question}. Please summarize the following documents to '
+                                        f'answer my question.\n------\n{document[:10000]}'}
+        ],
+        temperature=0.8,
+    )
+    response = completion['choices'][0]['message']['content']
+    return response
 
 
 # @st.cache_data(show_spinner=False)
