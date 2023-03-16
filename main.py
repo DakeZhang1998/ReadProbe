@@ -19,7 +19,13 @@ for i in range(top_n):
 st.markdown('# ReadProbe')
 st.markdown('A tool to support lateral reading.')
 
-input_text = st.text_area('Help me probe into:', 'Demo')
+demo = 'President Joe Biden recently released his budget proposal. The president is required by law to submit a ' \
+       'request to Congress prior to the start of a new fiscal year. Ultimately, what’s passed will be dictated by ' \
+       'Congress. The president’s budget request has become more of a wish list that plays a role in setting the ' \
+       'temperature for the policy battles to come on Capitol Hill and in the regulatory agencies. Sadly, ' \
+       'Biden’s budget contained a series of tax hikes that would batter the American economy.'
+
+input_text = st.text_area('Help me probe into:', demo)
 
 col1, _, _, _, _, col6 = st.columns(6)
 with col1:
@@ -36,7 +42,7 @@ if refresh_button:
     st.cache_data.clear()
 
 if probe_button or st.session_state.generated == 1:
-    if input_text == 'Please copy and paste the text you want to probe into.':
+    if len(input_text.strip()) == 0:
         st.warning('Please input your text.')
     else:
         with st.spinner('Generating questions ...'):
