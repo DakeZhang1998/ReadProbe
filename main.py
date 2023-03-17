@@ -1,6 +1,7 @@
 import uuid
 import json
 import streamlit as st
+from langdetect import detect
 
 import modules
 
@@ -18,6 +19,26 @@ if 'generation_id' not in st.session_state:
 for i in range(top_n):
     if f'question_{i}_feedback' not in st.session_state:
         st.session_state[f'question_{i}_feedback'] = 0
+
+
+# Layout for the sidebar
+with st.sidebar:
+    st.markdown('# :information_source: User Info')
+    st.markdown('### What is lateral reading?')
+    st.markdown('Lateral reading is a critical thinking approach used to evaluate the credibility and accuracy of '
+                'information found online by stepping away from the initial source and exploring other sources to '
+                'verify its authenticity.')
+    st.markdown('### How can lateral reading help fight online misinformation?')
+    st.markdown('Lateral reading can reduce the risk of being misled by misinformation, propaganda, and other forms '
+                'of disinformation. By cross-referencing information with multiple sources, users can become more '
+                'informed and responsible consumers of information, promoting a better online community.')
+    st.markdown('### How does this tool support lateral reading?')
+    st.markdown('All you need is to copy and paste a text into the input box and then click on the "Probe" '
+                'button. This tool (powered by [OpenAI](https://openai.com/)) will generate **three** '
+                'questions you may want to ask and provide answers by summarizing relevant documents found by [Bing]('
+                'https://bing.com/). You can give feedback on the generated contents. The generation time depends on '
+                'responsiveness of API calls. Please wait till the generation completes '
+                'before interacting with the page.')
 
 
 # Building the main page
@@ -49,9 +70,28 @@ if probe_button or st.session_state.generated == 1:
     if len(input_text.strip()) == 0:
         st.warning('Please input your text.')
     else:
+        # Input Check
+        with st.spinner('Checking input ...'):
+            if detect(input_text) != 'en':
+                st.warning('Only English is supported for now. Please try another input.')
+                st.stop()
+            if not modules.input_check(input_text):
+                st.warning('Your input may contain harmful content. Please try another input.')
+                st.stop()
+            if len(input_text.split()) < 20:
+                st.warning('Your input is too short. Please try longer input.')
+                st.stop()
+            if len(input_text.split()) > 2000:
+                st.warning('Your input is too long. Please try shorter input.')
+                st.stop()
+
+
+        # Generate questions
         with st.spinner('Generating questions ...'):
             questions = modules.generate_questions(input_text)
         records = []
+
+        # Search online and generate answers
         for i, question in enumerate(questions):
             record = [question]
             with st.expander(f'**{i + 1}\. {question}**', expanded=True):
@@ -76,23 +116,3 @@ if probe_button or st.session_state.generated == 1:
         modules.log_data(log_id=str(st.session_state.generation_id), user_input=input_text, output=json.dumps(records),
                          action='generation')
     st.session_state.generated = 1
-
-
-# Layout for the sidebar
-with st.sidebar:
-    st.markdown('# :information_source: User Info')
-    st.markdown('### What is lateral reading?')
-    st.markdown('Lateral reading is a critical thinking approach used to evaluate the credibility and accuracy of '
-                'information found online by stepping away from the initial source and exploring other sources to '
-                'verify its authenticity.')
-    st.markdown('### How can lateral reading help fight online misinformation?')
-    st.markdown('Lateral reading can reduce the risk of being misled by misinformation, propaganda, and other forms '
-                'of disinformation. By cross-referencing information with multiple sources, users can become more '
-                'informed and responsible consumers of information, promoting a better online community.')
-    st.markdown('### How does this tool support lateral reading?')
-    st.markdown('All you need is to copy and paste a text into the input box and then click on the "Probe" '
-                'button. This tool (powered by [OpenAI](https://openai.com/)) will generate **three** '
-                'questions you may want to ask and provide answers by summarizing relevant documents found by [Bing]('
-                'https://bing.com/). You can give feedback on the generated contents. The generation time depends on '
-                'responsiveness of API calls. Please wait till the generation completes '
-                'before interacting with the page.')

@@ -118,6 +118,16 @@ def log_data(log_id: str, user_input: str, output: str, action: str):
     requests.post(url, data=form_data)
 
 
+@st.cache_data(show_spinner=False)
+def input_check(input_text: str):
+    # This function check whether the input text complies with OpenAI's usage policies.
+    response = openai.Moderation.create(
+        input=input_text
+    )
+    output = response['results'][0]['categories'].values()
+    return False if True in output else True
+
+
 def refresh(top_n: int):
     # This function refreshes the current page and makes it ready for regeneration.
     if 'generated' in st.session_state:
@@ -132,7 +142,4 @@ def refresh(top_n: int):
 
 if __name__ == '__main__':
     # This part is used for testing functions in this file.
-    search_result = bing_search('Find me information about the use of mask to prevent covid-19.')
-    answer = summarize('Find me information about the use of mask to prevent covid-19.',
-                       ' '.join([doc for url, doc in search_result]))
     print('here')
