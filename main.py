@@ -32,10 +32,10 @@ demo = 'President Joe Biden recently released his budget proposal. The president
 
 input_text = st.text_area('Help me probe into:', demo)
 
-col1, _, _, _, _, col6 = st.columns(6)
+col1, col2 = st.columns(2)
 with col1:
     probe_button = st.button(':mag: &nbsp; Probe')
-with col6:
+with col2:
     refresh_button = st.button(':arrows_counterclockwise: &nbsp; Refresh')
 
 
