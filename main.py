@@ -8,6 +8,7 @@ import modules
 # Some global parameters
 top_n = 3  # Top n search results from Bing will be used to generate answers.
 n_questions = 3  # The number of questions that ChatGPT needs to come up with.
+enable_logging = True  # Turn on or off whether to log user feedback to Google Forms.
 
 
 if 'generated' not in st.session_state:
@@ -66,12 +67,12 @@ if probe_button or st.session_state.generated == 1:
                 button = st.button(':thumbsup:  &nbsp; I like this one', key=f'thumbsup_for_q{i+1}')
                 if button or st.session_state[f'question_{i}_feedback'] == 1:
                     st.info('Thanks for your feedback!')
-                    if button or st.session_state[f'question_{i}_feedback'] == 0:
+                    if button or st.session_state[f'question_{i}_feedback'] == 0 and enable_logging:
                         modules.log_data(log_id=str(st.session_state.generation_id), user_input=input_text,
                                          output=json.dumps(record), action='thumbsup')
                     st.session_state[f'question_{i}_feedback'] = 1
             records.append(record)
-    if probe_button and st.session_state.generated == 0:
+    if probe_button and st.session_state.generated == 0 and enable_logging:
         modules.log_data(log_id=str(st.session_state.generation_id), user_input=input_text, output=json.dumps(records),
                          action='generation')
     st.session_state.generated = 1
