@@ -43,9 +43,10 @@ Here is our instruction for the pilot user study.
 > using OpenAI services. Thanks for agreeing to participate in
 > this pilot user study. Some of your usage data will be collected 
 > anonymously. Please spend at least 15 minutes playing with this web
-> application: https://readprobe.streamlit.app/. Once finished, please
-> contact us to provide feedback on what aspects you like or dislike this
-> application. Thanks again for your valuable time.
+> application: https://readprobe.streamlit.app/. 
+> You may choose to quit this study anytime.
+> Once finished, please contact us to provide feedback on what aspects 
+> you like or dislike this application. Thanks again for your valuable time.
 
 X participants joined this pilot study. Here, we express our gratitude to
 their valuable feedback. We summarized their feedback into several points
