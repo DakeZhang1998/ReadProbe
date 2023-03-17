@@ -21,7 +21,7 @@ for i in range(top_n):
 
 
 # Building the main page
-st.markdown('# ReadProbe')
+st.markdown('# :bulb: ReadProbe')
 st.markdown('A tool to support lateral reading.')
 
 demo = 'President Joe Biden recently released his budget proposal. The president is required by law to submit a ' \
@@ -76,3 +76,23 @@ if probe_button or st.session_state.generated == 1:
         modules.log_data(log_id=str(st.session_state.generation_id), user_input=input_text, output=json.dumps(records),
                          action='generation')
     st.session_state.generated = 1
+
+
+# Layout for the sidebar
+with st.sidebar:
+    st.markdown('# :information_source: User Info')
+    st.markdown('### What is lateral reading?')
+    st.markdown('Lateral reading is a critical thinking approach used to evaluate the credibility and accuracy of '
+                'information found online by stepping away from the initial source and exploring other sources to '
+                'verify its authenticity.')
+    st.markdown('### How can lateral reading help fight online misinformation?')
+    st.markdown('Lateral reading can reduce the risk of being misled by misinformation, propaganda, and other forms '
+                'of disinformation. By cross-referencing information with multiple sources, users can become more '
+                'informed and responsible consumers of information, promoting a better online community.')
+    st.markdown('### How does this tool support lateral reading?')
+    st.markdown('All you need is to copy and paste a text into the input box and then click on the "Probe" '
+                'button. This tool (powered by [OpenAI](https://openai.com/)) will generate **three** '
+                'questions you may want to ask and provide answers by summarizing relevant documents found by [Bing]('
+                'https://bing.com/). You can give feedback on the generated contents. The generation time depends on '
+                'responsiveness of API calls. Please wait till the generation completes '
+                'before interacting with the page.')
