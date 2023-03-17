@@ -65,12 +65,13 @@ if probe_button or st.session_state.generated == 1:
                     st.markdown(f'{j + 1}. {search_result[j][0]}')
                 button = st.button(':thumbsup:  &nbsp; I like this one', key=f'thumbsup_for_q{i+1}')
                 if button or st.session_state[f'question_{i}_feedback'] == 1:
-                    st.session_state[f'question_{i}_feedback'] = 1
                     st.info('Thanks for your feedback!')
-                    modules.log_data(log_id=str(st.session_state.generation_id), user_input=input_text,
-                                     output=json.dumps(record), action='thumbsup')
+                    if button or st.session_state[f'question_{i}_feedback'] == 0:
+                        modules.log_data(log_id=str(st.session_state.generation_id), user_input=input_text,
+                                         output=json.dumps(record), action='thumbsup')
+                    st.session_state[f'question_{i}_feedback'] = 1
             records.append(record)
+    if probe_button and st.session_state.generated == 0:
+        modules.log_data(log_id=str(st.session_state.generation_id), user_input=input_text, output=json.dumps(records),
+                         action='generation')
     st.session_state.generated = 1
-    modules.log_data(log_id=str(st.session_state.generation_id), user_input=input_text, output=json.dumps(records),
-                     action='generation')
-
