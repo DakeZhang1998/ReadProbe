@@ -1,5 +1,5 @@
+import uuid
 import openai
-import logging
 import requests
 import streamlit as st
 from bs4 import BeautifulSoup
@@ -84,16 +84,26 @@ def summarize(question: str, document: str):
     return response
 
 
-# @st.cache_data(show_spinner=False)
-# def log_data(action: str):
-#     # This function takes as input a pair of question and document to produce
-#     # a short summary to answer the question using the information in the document.
-#     st.balloons()
+@st.cache_data(show_spinner=False)
+def log_data(log_id: str, user_input: str, output: str, action: str):
+    # This function takes as input a pair of question and document to produce
+    # a short summary to answer the question using the information in the document.
+    form_data = {
+        'entry.1797379595': log_id,
+        'entry.2042516990': user_input,
+        'entry.419672080': output,
+        'entry.466296310': action
+    }
+    url = st.secrets.google_forms.link
+    response = requests.post(url, data=form_data)
+    print(response)
 
 
 def refresh(top_n: int):
     if 'generated' in st.session_state:
         st.session_state.generated = 0
+    if 'generation_id' in st.session_state:
+        st.session_state.generation_id = uuid.uuid4()
     for i in range(top_n):
         if f'question_{i}_feedback' in st.session_state:
             st.session_state[f'question_{i}_feedback'] = 0
@@ -102,7 +112,5 @@ def refresh(top_n: int):
 
 if __name__ == '__main__':
     # This part is used for testing functions in this file.
-    results = generate_questions('The US Coast Guard has failed to use its power to prevent and punish sexual assault '
-                                 'and misconduct for decades — despite growing evidence that this kind of behavior is '
-                                 'a longstanding problem at sea.')
+    log_data('123')
     print('here')
