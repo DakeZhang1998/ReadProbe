@@ -84,7 +84,7 @@ def summarize(question: str, document: str):
     scores = np.array(cosine_similarity_scores)
     document_extraction = []
     sorted_indices = np.argsort(scores)[::-1]
-    for i, item in enumerate(sorted_indices[:10]):
+    for i, item in enumerate(sorted_indices[:8]):
         document_extraction.append(f'Passage {i + 1}:\n{chunks[item]}')
 
     # Ask ChatGPT to summarize the extracted chunks.
