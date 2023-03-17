@@ -95,8 +95,7 @@ def log_data(log_id: str, user_input: str, output: str, action: str):
         'entry.466296310': action
     }
     url = st.secrets.google_forms.link
-    response = requests.post(url, data=form_data)
-    print(response)
+    requests.post(url, data=form_data)
 
 
 def refresh(top_n: int):
