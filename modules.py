@@ -1,6 +1,7 @@
 import uuid
 import openai
 import requests
+import numpy as np
 import streamlit as st
 from bs4 import BeautifulSoup
 
@@ -68,6 +69,25 @@ def generate_questions(input_text: str):
 def summarize(question: str, document: str):
     # This function takes as input a pair of question and document to produce
     # a short summary to answer the question using the information in the document.
+
+    # Use embeddings to find relevant chunks.
+    words = document.split()
+    chunks = [' '.join(words[(i * 256): ((i + 1) * 256)]) for i in range(len(words) // 256)]
+    chunks.append(question)
+    response = openai.Embedding.create(input=chunks, model='text-embedding-ada-002')
+    embeddings = [response['data'][i]['embedding'] for i in range(len(chunks))]
+    cosine_similarity_scores = []
+    for i in range(len(chunks) - 1):
+        cosine_similarity_scores.append(
+            np.dot(embeddings[-1], embeddings[i]) / (np.linalg.norm(embeddings[-1]) * np.linalg.norm(embeddings[i])))
+    cosine_similarity_scores = np.array(cosine_similarity_scores)
+    scores = np.array(cosine_similarity_scores)
+    document_extraction = []
+    sorted_indices = np.argsort(scores)[::-1]
+    for i, item in enumerate(sorted_indices[:10]):
+        document_extraction.append(f'Passage {i + 1}:\n{chunks[item]}')
+
+    # Ask ChatGPT to summarize the extracted chunks.
     completion = openai.ChatCompletion.create(
         model='gpt-3.5-turbo',
         messages=[
@@ -76,7 +96,7 @@ def summarize(question: str, document: str):
                                           'Your answer should be concise and easy to understand. Your output should be '
                                           'plaintext.'},
             {'role': 'user', 'content': f'My answer is {question}. Please summarize the following documents to '
-                                        f'answer my question.\n------\n{document[:10000]}'}
+                                        f'answer my question.\n------\n{"".join(document_extraction)}'}
         ],
         temperature=0.8,
     )
@@ -99,6 +119,7 @@ def log_data(log_id: str, user_input: str, output: str, action: str):
 
 
 def refresh(top_n: int):
+    # This function refreshes the current page and makes it ready for regeneration.
     if 'generated' in st.session_state:
         st.session_state.generated = 0
     if 'generation_id' in st.session_state:
@@ -111,5 +132,7 @@ def refresh(top_n: int):
 
 if __name__ == '__main__':
     # This part is used for testing functions in this file.
-    log_data('123')
+    search_result = bing_search('Find me information about the use of mask to prevent covid-19.')
+    answer = summarize('Find me information about the use of mask to prevent covid-19.',
+                       ' '.join([doc for url, doc in search_result]))
     print('here')
