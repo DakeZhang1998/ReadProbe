@@ -43,7 +43,7 @@ st.markdown('# :bulb: ReadProbe [![GitHub-link](https://img.shields.io/badge/Git
 st.markdown('An AI-powered tool to support **lateral reading**.')
 st.markdown('### :pushpin: Instruction')
 st.markdown('Please read the information on the left before using this tool. Your input should contain at least 10 '
-            'words for meaningful questions, at most 2000 words ')
+            'words for generating meaningful questions and at most 2000 words due to the limit of ChatGPT.')
 st.markdown('### :robot_face: Start Here')
 demo = 'Misinformation Demo:\n' \
        'The U.S. Centers for Disease Control and Prevention increased what it considers the "lethal exposure" ' \
