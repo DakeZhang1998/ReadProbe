@@ -10,7 +10,7 @@ import modules
 top_n = 3  # Top n search results from Bing will be used to generate answers.
 n_questions = 5  # The number of questions that ChatGPT needs to come up with.
 enable_logging = True  # Turn on or off whether to log user feedback to Google Forms.
-st.set_page_config(layout="wide")
+st.set_page_config(layout='wide')
 
 if 'generated' not in st.session_state:
     st.session_state.generated = 0
@@ -42,8 +42,8 @@ with st.sidebar:
 # Building the main page
 st.markdown('# :bulb: ReadProbe [![GitHub-link](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo='
             'github&logoColor=white)](https://github.com/DakeZhang1998/ReadProbe)')
-st.markdown('An AI-powered tool to support **lateral reading**.')
-st.markdown('### :pushpin: Instruction')
+st.markdown('An AI-powered tool to support **lateral reading**')
+st.markdown('### :pushpin: Instructions')
 st.markdown('Please read the information on the left before using this tool. Your input should contain at least 10 '
             'words for generating meaningful questions and at most 2000 words due to the limit of ChatGPT.')
 st.markdown('### :robot_face: Start Here')
