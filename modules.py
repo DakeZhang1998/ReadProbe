@@ -50,7 +50,8 @@ def generate_questions(input_text: str):
                                           'factoid questions that users may ask when reading the text. The questions '
                                           'should not be too complicated and should be suitable to be used as queries '
                                           'to a search engine like Bing. Your questions will motivate users to search '
-                                          'for relevant documents to better understand the given text.'},
+                                          'for relevant documents to better determine whether the given text contains'
+                                          'misinformation.'},
             {'role': 'user', 'content': f'{input_text}\n------\n'
                                         f'Please come up with the five most critical background questions.'}
         ],
