@@ -45,10 +45,8 @@ st.markdown('### :pushpin: Instruction')
 st.markdown('Please read the information on the left before using this tool. Your input should contain at least 10 '
             'words for generating meaningful questions and at most 2000 words due to the limit of ChatGPT.')
 st.markdown('### :robot_face: Start Here')
-demo = 'Misinformation Demo:\n' \
-       'The U.S. Centers for Disease Control and Prevention increased what it considers the "lethal exposure" ' \
-       'threshold of vinyl chloride, a toxic chemical released due to the February 2023 Ohio train derailment, ' \
-       'mere days or weeks before the incident.'
+demo = 'Demo:\n' \
+       'Elon Musk\'s account was briefly suspended by an outgoing Twitter employee.'
 
 input_text = st.text_area(label='Help me probe into:', value=demo, height=130)
 
