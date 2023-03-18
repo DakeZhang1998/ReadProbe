@@ -7,14 +7,14 @@ import modules
 
 # Some global parameters
 top_n = 3  # Top n search results from Bing will be used to generate answers.
-n_questions = 3  # The number of questions that ChatGPT needs to come up with.
+n_questions = 5  # The number of questions that ChatGPT needs to come up with.
 enable_logging = True  # Turn on or off whether to log user feedback to Google Forms.
 
 if 'generated' not in st.session_state:
     st.session_state.generated = 0
 if 'generation_id' not in st.session_state:
     st.session_state.generation_id = uuid.uuid4()
-for i in range(top_n):
+for i in range(n_questions):
     if f'question_{i}_feedback' not in st.session_state:
         st.session_state[f'question_{i}_feedback'] = 0
 
@@ -31,7 +31,7 @@ with st.sidebar:
                 'informed and responsible consumers of information, promoting a better online community.')
     st.markdown('### How does this tool support lateral reading?')
     st.markdown('All you need is to copy and paste a text into the input box and then click on the "Probe" '
-                'button. This tool (powered by [OpenAI](https://openai.com/)) will generate **three** '
+                'button. This tool (powered by [OpenAI](https://openai.com/)) will generate **five** '
                 'questions you may want to ask and provide answers by summarizing relevant documents found by [Bing]('
                 'https://bing.com/). You can give feedback on the generated contents. The generation time depends on '
                 'responsiveness of API calls. Please wait till the generation completes '

@@ -52,7 +52,7 @@ def generate_questions(input_text: str):
                                           'to a search engine like Bing. Your questions will motivate users to search '
                                           'for relevant documents to better understand the given text.'},
             {'role': 'user', 'content': f'{input_text}\n------\n'
-                                        f'Please come up with the three most critical background questions.'}
+                                        f'Please come up with the five most critical background questions.'}
         ],
         temperature=0.8,
     )
@@ -98,7 +98,7 @@ def summarize(question: str, document: str):
             {'role': 'user', 'content': f'My answer is {question}. Please summarize the following documents to '
                                         f'answer my question.\n------\n{"".join(document_extraction)}'}
         ],
-        temperature=0.2,
+        temperature=0.8,
     )
     response = completion['choices'][0]['message']['content']
     return response
