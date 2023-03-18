@@ -98,7 +98,7 @@ def summarize(question: str, document: str):
             {'role': 'user', 'content': f'My answer is {question}. Please summarize the following documents to '
                                         f'answer my question.\n------\n{"".join(document_extraction)}'}
         ],
-        temperature=0.8,
+        temperature=0.2,
     )
     response = completion['choices'][0]['message']['content']
     return response
