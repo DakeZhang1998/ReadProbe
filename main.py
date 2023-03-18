@@ -5,10 +5,12 @@ from langdetect import detect
 
 import modules
 
+
 # Some global parameters
 top_n = 3  # Top n search results from Bing will be used to generate answers.
 n_questions = 5  # The number of questions that ChatGPT needs to come up with.
 enable_logging = True  # Turn on or off whether to log user feedback to Google Forms.
+st.set_page_config(layout="wide")
 
 if 'generated' not in st.session_state:
     st.session_state.generated = 0
@@ -48,7 +50,7 @@ st.markdown('### :robot_face: Start Here')
 demo = 'Demo:\n' \
        'Elon Musk\'s account was briefly suspended by an outgoing Twitter employee.'
 
-input_text = st.text_area(label='Help me probe into:', value=demo, height=130)
+input_text = st.text_area(label='Help me probe into:', value=demo)
 
 col1, col2 = st.columns(2)
 with col1:
