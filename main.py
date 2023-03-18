@@ -54,7 +54,7 @@ col1, col2 = st.columns(2)
 with col1:
     probe_button = st.button(':mag: &nbsp; Probe')
 with col2:
-    refresh_button = st.button(':arrows_counterclockwise: &nbsp; Refresh')
+    refresh_button = st.button(':arrows_counterclockwise: &nbsp; Reset')
 
 if refresh_button:
     modules.refresh(top_n=top_n)
