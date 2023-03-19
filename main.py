@@ -5,7 +5,6 @@ from langdetect import detect
 
 import modules
 
-
 # Some global parameters
 top_n = 3  # Top n search results from Bing will be used to generate answers.
 n_questions = 5  # The number of questions that ChatGPT needs to come up with.
@@ -98,12 +97,20 @@ if probe_button or st.session_state.generated == 1:
                     search_result = modules.bing_search(question, top_n=top_n)
                 with st.spinner('Generating answers ...'):
                     record.append([url for url, doc in search_result])
-                    answer = modules.summarize(question, ' '.join([doc for url, doc in search_result]))
+                    answer = modules.summarize(question, [doc for url, doc in search_result])
                     answer = str(answer).replace('$', '\\$')
                     record.append(answer)
+                    seen = set()
+                    for ind, (url, doc) in enumerate(search_result):
+                        if f'[{ind + 1}]' in answer:
+                            seen.add(ind)
+                        answer = answer.replace(f'[{ind + 1}]', f'[[{ind+1}]]({url})')
                     st.markdown(f'> {answer}')
                 for j in range(len(search_result)):
-                    st.markdown(f'{j + 1}. {search_result[j][0]}')
+                    output = f'{j + 1}. {search_result[j][0]}'
+                    if j not in seen:
+                        output = f'{output} (Not leveraged in attribution, but potentially relevant)'
+                    st.markdown(output)
                 button = st.button(':thumbsup:  &nbsp; I like this one', key=f'thumbsup_for_q{i + 1}')
                 if button or st.session_state[f'question_{i}_feedback'] == 1:
                     st.info('Thanks for your feedback!')

@@ -4,7 +4,8 @@ import requests
 import numpy as np
 import streamlit as st
 from bs4 import BeautifulSoup
-
+from ftfy import fix_text
+from typing import List
 
 openai.api_key = st.secrets.openai_keys.key
 
@@ -42,64 +43,65 @@ def bing_search(query, top_n=3):
 def generate_questions(input_text: str):
     # This function calls OpenAI APIs to generate a list of questions
     # based on the input text given by the user.
+    messages = [
+        {'role': 'system',
+         'content': 'You are a factual and helpful assistant to aid users in the lateral reading task. You will receive a segment of text (Text:), and you need to raise five important, insightful, diverse, simple, factoid questions that may arise to a user when reading the text but are not answered by the text (Question1:, Question2:, Question3:, Question4: Question5:). The questions should be suitable as meaningful queries (use explicit entities that are fully resolved and not dependent on Text:) to a search engine like Bing. Your questions will motivate users to search for relevant documents to better determine whether the given text contains misinformation.'},
+        {'role': 'user', 'content': f'Text: {input_text}\n------\n'
+         f'Carefully choose insightful and atomic lateral reading questions not answered by the above text, ensuring that the queries are self-sufficient (Do not have pronouns or attributes relying on the text, they should be fully resolved and make complete sense independently).'}
+    ]
     completion = openai.ChatCompletion.create(
         model='gpt-3.5-turbo',
-        messages=[
-            {'role': 'system', 'content': 'You are an AI assistant to help users perform the task of lateral reading. '
-                                          'You will be given a piece of text. Your task is to raise atomic, simple, '
-                                          'factoid questions that users may ask when reading the text. The questions '
-                                          'should not be too complicated and should be suitable to be used as queries '
-                                          'to a search engine like Bing. Your questions will motivate users to search '
-                                          'for relevant documents to better determine whether the given text contains'
-                                          'misinformation.'},
-            {'role': 'user', 'content': f'{input_text}\n------\n'
-                                        f'Please come up with the five most critical background questions.'}
-        ],
-        temperature=0.8,
+        messages=messages,
+        temperature=0.2,
     )
     response = completion['choices'][0]['message']['content']
+    print(response)
+    responses = [line for line in response.split('\n') if line.strip() != '']
     questions = []
-    for line in response.split('\n'):
+    for ind, line in enumerate(responses):
         question = line.strip()
-        if len(question) > 5:
-            questions.append(question[3:])
+        questions.append(question.removeprefix(f'Question{ind + 1}:').strip())
     return questions
 
 
 @st.cache_data(show_spinner=False)
-def summarize(question: str, document: str):
+def summarize(question: str, documents: List[str]):
     # This function takes as input a pair of question and document to produce
     # a short summary to answer the question using the information in the document.
 
     # Use embeddings to find relevant chunks.
-    words = document.split()
-    chunks = [' '.join(words[(i * 256): ((i + 1) * 256)]) for i in range(len(words) // 256)]
-    chunks.append(question)
-    response = openai.Embedding.create(input=chunks, model='text-embedding-ada-002')
-    embeddings = [response['data'][i]['embedding'] for i in range(len(chunks))]
-    cosine_similarity_scores = []
-    for i in range(len(chunks) - 1):
-        cosine_similarity_scores.append(
-            np.dot(embeddings[-1], embeddings[i]) / (np.linalg.norm(embeddings[-1]) * np.linalg.norm(embeddings[i])))
-    cosine_similarity_scores = np.array(cosine_similarity_scores)
-    scores = np.array(cosine_similarity_scores)
     document_extraction = []
-    sorted_indices = np.argsort(scores)[::-1]
-    for i, item in enumerate(sorted_indices[:6]):
-        document_extraction.append(f'Passage {i + 1}:\n{chunks[item]}')
-
+    for docind, document in enumerate(documents):
+        words = document.split()
+        chunks = [' '.join(words[(i * 256): ((i + 1) * 256)]) for i in range(len(words) // 256)]
+        chunks.append(question)
+        response = openai.Embedding.create(input=chunks, model='text-embedding-ada-002')
+        embeddings = [response['data'][i]['embedding'] for i in range(len(chunks))]
+        cosine_similarity_scores = []
+        for i in range(len(chunks) - 1):
+            cosine_similarity_scores.append(
+                np.dot(embeddings[-1], embeddings[i]) / (np.linalg.norm(embeddings[-1]) * np.linalg.norm(embeddings[i])))
+        cosine_similarity_scores = np.array(cosine_similarity_scores)
+        scores = np.array(cosine_similarity_scores)
+        sorted_indices = np.argsort(scores)[::-1]
+        for i, item in enumerate(sorted_indices[:2]):
+            document_extraction.append(fix_text(f'Document {docind + 1}: Relevant Segment {i + 1}: {chunks[item]}'))
+    doc_texts = "\n".join(document_extraction)
+    messages = [
+        {'role': 'system', 'content': 'You are a factual and helpful assistant designed to read and cohesively summarize segments from different relevant document sources '
+         'to answer the question at hand. Your answer should be informative but no more than 100 words. '
+         'Your answer should be concise, easy to understand and should only use information from the provided relevant segments '
+         'but combine the search results into a coherent answer. Do not repeat text and do not include irrelevant text in your answers. Use an unbiased and journalistic tone. Make sure the output is in plaintext. '
+         'Attribute each sentence with proper citations using the document number with the [${doc_number}] notation (Example: "Hydroxychloroquine is not a cure for COVID-19 [1][3]."). '
+         'Ensure each sentence in the answer is properly attributed. Ensure each of the documents is cited at least once. If different results refer to different entities with the same name, cite them separately.'},
+        {'role': 'user', 'content': f'My question is "{question}". Cohesively and factually summarize the following documents to '
+         f'answer my question.\n------\n{doc_texts}'}]
+    print(messages)
     # Ask ChatGPT to summarize the extracted chunks.
     completion = openai.ChatCompletion.create(
         model='gpt-3.5-turbo',
-        messages=[
-            {'role': 'system', 'content': 'You are an AI assistant to help users read and summarize documents to '
-                                          'answer the question. Your answer should be no more than 100 words. '
-                                          'Your answer should be concise and easy to understand. Your output should be '
-                                          'plaintext.'},
-            {'role': 'user', 'content': f'My answer is {question}. Please summarize the following documents to '
-                                        f'answer my question.\n------\n{"".join(document_extraction)}'}
-        ],
-        temperature=0.8,
+        messages=messages,
+        temperature=0.2,
     )
     response = completion['choices'][0]['message']['content']
     return response
