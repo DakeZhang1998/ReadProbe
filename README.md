@@ -1,8 +1,29 @@
 # ReadProbe
 
+Live demo: https://readprobe.streamlit.app/
+
+## Overview
+
+![Overview of how this tool works](/overview.png?raw=true "ReadProbe Design Overview")
+
 ## Features
 
-- [x] **Input Moderation**: asdasd
+*\* We use "content generation" to refer to the process of generating questions
+and corresponding answers for a given input.*
+
+- **Input Moderation**: asdasd
+- **Anonymous User Feedback**: We log two kinds of user actions: 
+content generation (we collect the user input and generated questions 
+and answers) and thumbs-up (we collect the corresponding question and 
+answer). To make sure anonymity, we generated a random id
+using `uuid.uuid4()` for each content generation. 
+We use Google Forms as a light-weight database
+to store
+
+## Installation Instructions
+### Run this project on a local machine
+
+### Deploy on Streamlit
 
 ## Plans
 - [ ] Bing search function: Given a question, 
@@ -44,6 +65,9 @@ Here is our instruction for the pilot user study.
 > this pilot user study. Some of your usage data will be collected 
 > anonymously. Please spend at least 15 minutes playing with this web
 > application: https://readprobe.streamlit.app/. 
+> You are encouraged to click on the "I like this one" button to indicate
+> that you like the generated question and answer, e.g., they are
+> very relevant or helpful.
 > You may choose to quit this study anytime.
 > Once finished, please contact us to provide feedback on what aspects 
 > you like or dislike this application. Thanks again for your valuable time.
@@ -56,8 +80,11 @@ shown below:
 - Nagtive
   1. asdasd
 
+Note that our friends may be biased to giving positive feedback. 
+A more formal and large-scale user study is required to demonstrate the 
+usefulness of this tool.
 
-
+s
 ## :warning: Disclaimer
 
 Content generation in this web application is performed mainly by calling 
