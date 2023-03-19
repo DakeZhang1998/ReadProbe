@@ -46,7 +46,7 @@ st.markdown('An AI-powered tool to support **lateral reading**.')
 st.markdown('### :pushpin: Instructions')
 st.markdown('Please read the information on the left before using this tool. The length of your input should be more '
             'than 10 words (enough context for meaningful generation) and less than 2000 words (due to the limit of '
-            'ChatGPT).')
+            'ChatGPT). Only English is supported at the current stage.')
 st.markdown('### :robot_face: Start Here')
 demo = 'Demo:\n' \
        'Elon Musk\'s account was briefly suspended by an outgoing Twitter employee.'
