@@ -70,18 +70,69 @@ to prohibit malicious content, such as violence or hate.
 and corresponding answers for a given user input.*
 
 ## Installation Instructions
-### Run this project on a local machine
 
-### Deploy on Streamlit
+This project depends on three third-party services: 
+[Bing Web Search API](https://www.microsoft.com/en-us/bing/apis/bing-web-search-api),
+[OpenAI API](https://openai.com/blog/openai-api),
+and [Google Forms](https://docs.google.com/forms/).
+They all provide free credits/services with certain limitations.
+Here are the steps to set up those services for this project:
+1. **Bing Web Search API**: Login to your Microsoft Azure account 
+(or create one using this [link](https://azure.microsoft.com/en-us/free/)
+if you don't have one) and then create a
+Bing search resource using this [link](https://portal.azure.com/#create/microsoft.bingsearch).
+Choose the F1 pricing tier, which is free with a limitation of 3 transactions
+per second and 1000 transactions per month.
+You may choose more expensive tiers if you want to use credits on your Azure 
+account. Once the resource is created, you can access the key under the 
+section "Keys and Endpoint" in your Bing search resource.
+2. **OpenAI API**: Create an OpenAI account using this
+[link](https://platform.openai.com/signup]) if you don't have one. 
+A new OpenAI account may have some free credits.
+You can find your API keys at this
+[link](https://platform.openai.com/account/api-keys).
+You may need to generate a new API key since OpenAI won't display your 
+previous API keys in full again.
+3. **Google Forms**: It's a bit more complicated to set up this service.
+You may choose to set `enable_logging = False` to disable logging in
+[main.py](main.py), which won't affect the main functionalities of this
+tool. If you want to enable this feature, create a new Google Form using
+this [link](https://docs.google.com/forms/), the name of which is up to you.
+Then for the questions, create four questions (input_id, input, output, 
+action) with long answer text inputs. The link to your form should be in
+this format `https://docs.google.com/forms/d/<form_random_id>/edit`.
+Then follow this StackOverflow 
+[post](https://stackoverflow.com/questions/58927388/how-to-submit-responses-to-google-forms-with-python)
+to modify the function `log_data()` in [module.py](main.py).
 
+Well done! You are ready to run this project on your local machine or
+deploy it on [Streamlit Community Cloud](https://streamlit.io/cloud).
 
-## Q&A
-1. How to run this project on my local machine? \
-Make sure you have [Streamlit](https://streamlit.io/) installed. 
-Then run this command in the root repository of this project 
-`streamlit run main.py`. 
-   1. Bing API: free , how to get.
+### Option 1: Run this project on a local machine.
 
+1. Install dependencies listed in [requirement.txt](requirements.txt).
+2. Create a folder named ".streamlit" in the root directory of this project.
+Create a file named "secrets.toml" in that folder with the following content. Fill in your
+keys and the URL to your Google form.
+    ```
+    [azure_bing_keys]
+    key = '<your_bing_web_search_key>'
+    [openai_keys]
+    key = '<you_openai_key>'
+    [google_forms]
+    link = 'https://docs.google.com/forms/d/e/<your_form_random_id>/formResponse'
+    ```
+3. Then run this command `streamlit run main.py` in the root repository of this project.
+
+### Option 2: Deploy this project on Streamlit
+
+1. Fork this repository. And then follow this [document](https://docs.streamlit.io/streamlit-community-cloud/get-started).
+2. Copy and paste the same content for "secrets.toml" file mentioned in 
+Option 1. Set up your secrets following this [document](https://docs.streamlit.io/streamlit-community-cloud/get-started/deploy-an-app/connect-to-data-sources/secrets-management).
+
+If you run into any trouble or have questions during your installation,
+please open an [issue](https://github.com/DakeZhang1998/ReadProbe/issues) 
+and we are happy to provide further assistance.
 
 ## Evaluation
 
