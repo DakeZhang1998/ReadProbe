@@ -5,7 +5,7 @@ Live demo: https://readprobe.streamlit.app/
 ## Overview
 
 <p align="center">
-   <img src="overview.png" alt="An overview figure of ReadProbe" title="ReadProbe Design Overview">
+   <img src="overview.jpg" alt="An overview figure of ReadProbe" title="ReadProbe Design Overview">
 </p>
 
 ## Features
