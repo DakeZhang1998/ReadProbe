@@ -1,4 +1,19 @@
-# ReadProbe
+<div align="center">
+    <h1>ReadProbe</h1>
+    <b>An AI-powered tool to support lateral reading.</b>
+</div>
+
+## About
+
+Lateral reading is a critical thinking approach used to evaluate the 
+credibility and accuracy of information found online by stepping away 
+from the initial source and exploring other sources to verify its 
+authenticity. Lateral reading can reduce the risk of being misled by 
+misinformation, propaganda, and other forms of disinformation. 
+By cross-referencing information with multiple sources, users can become 
+more informed and responsible consumers of information, promoting a better 
+online community.
+
 
 Live demo: https://readprobe.streamlit.app/
 
