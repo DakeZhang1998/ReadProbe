@@ -50,6 +50,8 @@ with the question.
 - **Answer Generation**: With the question and relevant chunks from **Bing Search** 
 module and **Relevance Ranking** module, we prompt ChatGPT
 to answer the question by summarizing those relevant chunks.
+Similar to New Bing, we ask ChatGPT to attribute each generated sentence by
+citing sources the sentence is based on.
 - **Anonymous User Feedback**: We log two kinds of user actions for future improvements: 
 content generation (collecting the user input and generated questions 
 and answers) and thumbs-up (collecting the corresponding question and 
