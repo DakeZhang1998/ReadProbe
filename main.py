@@ -118,7 +118,7 @@ if probe_button or st.session_state.generated == 1:
     st.session_state.generated = 1
 
 st.markdown('### :warning: Disclaimer')
-st.markdown('Content generation in this web application is performed mainly by calling [OpenAI](https://openai.com/)) '
+st.markdown('Content generation in this web application is performed mainly by calling [OpenAI](https://openai.com/) '
             'APIs and [Bing](https://bing.com/) APIs. Even though we perform some processing to improve the quality of '
             'the generated content, due to our limited knowledge of the models behind those services, we can not make '
             'sure the generated content won\'t contain biased, unethical, incorrect, or controversial information. '
