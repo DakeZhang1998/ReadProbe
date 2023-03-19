@@ -35,17 +35,18 @@ with st.sidebar:
     st.markdown('All you need is to copy and paste a text into the input box and then click on the "Probe" '
                 'button. This tool (powered by [OpenAI](https://openai.com/)) will generate **five** '
                 'questions you may want to ask and provide answers by summarizing relevant documents found by [Bing]('
-                'https://bing.com/). You can give feedback on the generated contents. The generation time depends on '
-                'responsiveness of API calls. Please wait till the generation completes '
+                'https://bing.com/). You can give feedback on the generated content. The generation time depends on '
+                'the responsiveness of API calls. Please wait till the generation completes '
                 'before interacting with the page.')
 
 # Building the main page
 st.markdown('# :bulb: ReadProbe [![GitHub-link](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo='
             'github&logoColor=white)](https://github.com/DakeZhang1998/ReadProbe)')
-st.markdown('An AI-powered tool to support **lateral reading**')
+st.markdown('An AI-powered tool to support **lateral reading**.')
 st.markdown('### :pushpin: Instructions')
-st.markdown('Please read the information on the left before using this tool. Your input should contain at least 10 '
-            'words for generating meaningful questions and at most 2000 words due to the limit of ChatGPT.')
+st.markdown('Please read the information on the left before using this tool. The length of your input should be more '
+            'than 10 words (enough context for meaningful generation) and less than 2000 words (due to the limit of '
+            'ChatGPT).')
 st.markdown('### :robot_face: Start Here')
 demo = 'Demo:\n' \
        'Elon Musk\'s account was briefly suspended by an outgoing Twitter employee.'
