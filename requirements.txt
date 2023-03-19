@@ -2,3 +2,4 @@ openai
 streamlit
 beautifulsoup4
 langdetect
+ftfy
