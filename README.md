@@ -12,10 +12,18 @@ By cross-referencing information with multiple sources, users can become
 more informed and responsible consumers of information, promoting a better 
 online community.
 
+Live demo: https://readprobe.streamlit.app/. This web interface is to 
+illustrate how this tool works and collect early feedback from users. 
+For future work, **ReadProbe** could be embedded into a browser extension 
+where users can directly select the text they want to probe into in the 
+same tab without the hassle to copy and paste the text into a new tab.
 
-Live demo: https://readprobe.streamlit.app/
+This project is under the [GNU General Public License](LICENSE).
 
 ## Overview
+
+The figure below shows how **ReadProbe** works, especially the data flow
+among different components.
 
 <p align="center">
    <img src="overview.png" alt="An overview figure of ReadProbe" title="ReadProbe Design Overview">
@@ -23,41 +31,51 @@ Live demo: https://readprobe.streamlit.app/
 
 ## Features
 
-*\* We use "content generation" to refer to the process of generating questions
-and corresponding answers for a given input.*
+- **Question Generation**: To support lateral reading, we prompt OpenAI's 
+[ChatGPT](https://openai.com/blog/chatgpt) to come up with **five**
+questions that the user may ask when reading the input text.
+- **Bing Search**: For each generated question, we call the
+[Bing Web Search API](https://www.microsoft.com/en-us/bing/apis/bing-web-search-api)
+to find relevant documents to answer the question. This module strengthens
+ChatGPT's knowledge of events that happened after 2021 and mitigates its
+known behavior to fabricate facts.
+- **Relevance Ranking**: Web documents are usually long and only parts of
+them are relevant to the question. Due to the input limit (4096 tokens) of
+ChatGPT, we break the top **three** most relevant documents into text chunks 
+(each with 256 words) and then select the most relevant **six** chunks to 
+construct the input to the ChatGPT to generate the answer. To measure the
+relevance, we use OpenAI's 
+[text-embedding model](https://platform.openai.com/docs/guides/embeddings/what-are-embeddings)
+to obtain semantic vectors for both the question and text chunks and then
+select the top **six** most relevant chunks based on their cosine similarity
+with the question.
+- **Answer Generation**: With the question and relevant chunks from **Bing Search** 
+module and **Relevance Ranking** module, we prompt ChatGPT
+to answer the question by summarizing those relevant chunks.
+- **Anonymous User Feedback**: We log two kinds of user actions for future improvements: 
+content generation (collecting the user input and generated questions 
+and answers) and thumbs-up (collecting the corresponding question and 
+answer that the user likes). To make sure anonymity, we generated a random id
+using `uuid.uuid4()` for each content generation. We use 
+[Google Forms](https://docs.google.com/forms/) as a 
+lightweight database to store our logs.
+- **Input Moderation**: Several checks are performed to avoid undesired
+user inputs. Specifically, we check the input length to make sure the user
+input provides enough context for ChatGPT to generate meaningful questions
+and does not exceed the input limit of ChatGPT (4096 tokens). We also check
+the input language using [langdetect](https://github.com/Mimino666/langdetect), 
+because we only support English for now. Finally, we call OpenAI's
+[moderation endpoint](https://platform.openai.com/docs/guides/moderation/overview)
+to prohibit malicious content, such as violence or hate.
 
-- **Input Moderation**: asdasd
-- **Anonymous User Feedback**: We log two kinds of user actions: 
-content generation (we collect the user input and generated questions 
-and answers) and thumbs-up (we collect the corresponding question and 
-answer). To make sure anonymity, we generated a random id
-using `uuid.uuid4()` for each content generation. 
-We use Google Forms as a light-weight database
-to store
+*\* We use the phrase "content generation" to refer to the process of generating questions
+and corresponding answers for a given user input.*
 
 ## Installation Instructions
 ### Run this project on a local machine
 
 ### Deploy on Streamlit
 
-## Plans
-- [ ] Bing search function: Given a question, 
-this function should return a string which is the concatenation of the web
-documents of top **3** Bing search results.
-- [ ] Question generation function: Given a piece of text, this function
-should call ChatGPT APIs to generate a list questions relevant to the text
-to support lateral reading.
-- [ ] Answer generation function: Given a generated question and top **n**
-relevant documents found by Bing search, this function should call ChatGPT
-APIs to generate an answer to the question.
-- [ ] Input text examination. To avoid intentionally malicious input,
-we should filter out certain black-list words and check the language 
-(English only).
-- [ ] For each generated question, there should be a "like" button so that
-users can indicate if they like the generated questions.
-- [ ] Ask friends to try this web app and provide feedback.
-- [ ] Make sure the API key is provided in the cloud app, not in this repo.
-- [ ] Log histories (input, output, feedback) into a online database.
 
 ## Q&A
 1. How to run this project on my local machine? \
@@ -78,7 +96,7 @@ Here is our instruction for the pilot user study.
 > We developed a tool to help users perform lateral reading 
 > using OpenAI services. Thanks for agreeing to participate in
 > this pilot user study. Some of your usage data will be collected 
-> anonymously. Please spend at least 15 minutes playing with this web
+> anonymously. Please spend at least 10 minutes playing with this web
 > application: https://readprobe.streamlit.app/. 
 > You are encouraged to click on the "I like this one" button to indicate
 > that you like the generated question and answer, e.g., they are
@@ -92,8 +110,8 @@ their valuable feedback. We summarized their feedback into several points
 shown below:
 - Positive
   1. asdas
-- Nagtive
-  1. asdasd
+- Negative
+  1. Gneration is slow.
 
 Note that our friends may be biased to giving positive feedback. 
 A more formal and large-scale user study is required to demonstrate the 
