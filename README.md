@@ -87,7 +87,7 @@ You may choose more expensive tiers if you want to use credits on your Azure
 account. Once the resource is created, you can access the key under the 
 section "Keys and Endpoint" in your Bing search resource.
 2. **OpenAI API**: Create an OpenAI account using this
-[link](https://platform.openai.com/signup]) if you don't have one. 
+[link](https://platform.openai.com/signup) if you don't have one. 
 A new OpenAI account may have some free credits.
 You can find your API keys at this
 [link](https://platform.openai.com/account/api-keys).
