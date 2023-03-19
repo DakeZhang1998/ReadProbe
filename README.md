@@ -1,7 +1,5 @@
-<div align="center">
-    <h1>ReadProbe</h1>
-    <b>An AI-powered tool to support lateral reading.</b>
-</div>
+# ReadProbe
+**An AI-powered tool to support lateral reading.**
 
 ## About
 
