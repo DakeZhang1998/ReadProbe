@@ -5,21 +5,28 @@ from langdetect import detect
 
 import modules
 
+
 # Some global parameters
 top_n = 3  # Top n search results from Bing will be used to generate answers.
 n_questions = 5  # The number of questions that ChatGPT needs to come up with.
 enable_logging = True  # Turn on or off whether to log user feedback to Google Forms.
 st.set_page_config(layout='wide')
 
+
+# Some variables to control the execution of this program
 if 'generated' not in st.session_state:
+    # Whether the generation is completed
     st.session_state.generated = 0
 if 'generation_id' not in st.session_state:
+    # Random ID for anonymous feedback
     st.session_state.generation_id = uuid.uuid4()
 for i in range(n_questions):
+    # Whether the "I like this one" button is clicked for each question
     if f'question_{i}_feedback' not in st.session_state:
         st.session_state[f'question_{i}_feedback'] = 0
 
-# Layout for the sidebar
+
+# Layout of the sidebar
 with st.sidebar:
     st.markdown('# :information_source: User Info')
     st.markdown('### What is lateral reading?')
@@ -37,6 +44,7 @@ with st.sidebar:
                 'https://bing.com/). You can give feedback on the generated content. The generation time depends on '
                 'the responsiveness of API calls. Please wait till the generation completes '
                 'before interacting with the page.')
+
 
 # Building the main page
 st.markdown('# :bulb: ReadProbe [![GitHub-link](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo='
@@ -61,64 +69,69 @@ with col2:
 if refresh_button:
     modules.refresh(top_n=top_n)
 
-# Interations
+
+# Interactions
 if probe_button or st.session_state.generated == 1:
     if probe_button and st.session_state.generated == 1:
+        # If the content has been generated but the user still clicks on the "probe" button, rerun the program.
         modules.refresh(top_n=top_n)
-    if len(input_text.strip()) == 0:
-        st.warning('Please input your text.')
-        st.stop()
-    else:
-        # Input Check
-        with st.spinner('Checking input ...'):
-            if detect(input_text) != 'en':
-                st.warning('Only English is supported for now. Please try another input.')
-                st.stop()
-            if not modules.input_check(input_text):
-                st.warning('Your input may contain harmful content. Please try another input.')
-                st.stop()
-            if len(input_text.split()) < 10:
-                st.warning('Your input is too short. Please try longer input.')
-                st.stop()
-            if len(input_text.split()) > 2000:
-                st.warning('Your input is too long. Please try shorter input.')
-                st.stop()
 
-        # Generate questions
-        with st.spinner('Generating questions ...'):
-            questions = modules.generate_questions(input_text)
+    # Input Check
+    with st.spinner('Checking input ...'):
+        if len(input_text.strip()) == 0:
+            st.warning('Please input your text.')
+            st.stop()
+        if detect(input_text) != 'en':
+            st.warning('Only English is supported for now. Please try another input.')
+            st.stop()
+        if not modules.input_check(input_text):
+            st.warning('Your input may contain harmful content. Please try another input.')
+            st.stop()
+        if len(input_text.split()) < 10:
+            st.warning('Your input is too short. Please try longer input.')
+            st.stop()
+        if len(input_text.split()) > 2000:
+            st.warning('Your input is too long. Please try shorter input.')
+            st.stop()
 
-        # Search online and generate answers
-        records = []
-        for i, question in enumerate(questions):
-            record = [question]
-            with st.expander(f'**{i + 1}\. {question}**', expanded=True):
-                with st.spinner('Searching online ...'):
-                    search_result = modules.bing_search(question, top_n=top_n)
-                with st.spinner('Generating answers ...'):
-                    record.append([url for url, doc in search_result])
-                    answer = modules.summarize(question, [doc for url, doc in search_result])
-                    answer = str(answer).replace('$', '\\$')
-                    record.append(answer)
-                    seen = set()
-                    for ind, (url, doc) in enumerate(search_result):
-                        if f'[{ind + 1}]' in answer:
-                            seen.add(ind)
-                        answer = answer.replace(f'[{ind + 1}]', f'[[{ind+1}]]({url})')
-                    st.markdown(f'> {answer}')
-                for j in range(len(search_result)):
-                    output = f'{j + 1}. {search_result[j][0]}'
-                    if j not in seen:
-                        output = f'{output} (Not leveraged in attribution, but potentially relevant)'
-                    st.markdown(output)
-                button = st.button(':thumbsup:  &nbsp; I like this one', key=f'thumbsup_for_q{i + 1}')
-                if button or st.session_state[f'question_{i}_feedback'] == 1:
-                    st.info('Thanks for your feedback!')
-                    if button or st.session_state[f'question_{i}_feedback'] == 0 and enable_logging:
-                        modules.log_data(log_id=str(st.session_state.generation_id), user_input=input_text,
-                                         output=json.dumps(record), action='thumbsup')
-                    st.session_state[f'question_{i}_feedback'] = 1
-            records.append(record)
+    # Generate questions
+    with st.spinner('Generating questions ...'):
+        questions = modules.generate_questions(input_text)
+
+    # Search online and generate answers
+    records = []
+    for i, question in enumerate(questions):
+        record = [question]
+        with st.expander(f'**{i + 1}\. {question}**', expanded=True):
+            with st.spinner('Searching online ...'):
+                search_result = modules.bing_search(question, top_n=top_n)
+            with st.spinner('Generating answers ...'):
+                record.append([url for url, doc in search_result])
+                answer = modules.summarize(question, [doc for url, doc in search_result])
+                answer = str(answer).replace('$', '\\$')
+                record.append(answer)
+                seen = set()
+                # Insert attribution citations
+                for ind, (url, doc) in enumerate(search_result):
+                    if f'[{ind + 1}]' in answer:
+                        seen.add(ind)
+                    answer = answer.replace(f'[{ind + 1}]', f'[[{ind + 1}]]({url})')
+                st.markdown(f'> {answer}')
+            # Show URLs to the relevant web documents
+            for j in range(len(search_result)):
+                output = f'{j + 1}. {search_result[j][0]}'
+                if j not in seen:
+                    output = f'{output} (not leveraged in attribution but potentially relevant)'
+                st.markdown(output)
+            # User feedback: I like this one
+            button = st.button(':thumbsup:  &nbsp; I like this one', key=f'thumbsup_for_q{i + 1}')
+            if button or st.session_state[f'question_{i}_feedback'] == 1:
+                st.info('Thanks for your feedback!')
+                if button or st.session_state[f'question_{i}_feedback'] == 0 and enable_logging:
+                    modules.log_data(log_id=str(st.session_state.generation_id), user_input=input_text,
+                                     output=json.dumps(record), action='thumbsup')
+                st.session_state[f'question_{i}_feedback'] = 1
+        records.append(record)
     if probe_button and st.session_state.generated == 0 and enable_logging:
         modules.log_data(log_id=str(st.session_state.generation_id), user_input=input_text, output=json.dumps(records),
                          action='generation')
