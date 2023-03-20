@@ -158,29 +158,31 @@ Here are our instructions for the pilot user study.
 > Once finished, please contact us to provide feedback on what aspects 
 > you like or dislike. Thanks again for your valuable time.
 
-8 participants joined this pilot study. Here, we express our gratitude for
-their valuable feedback. Out of 24 times of content generation, we received 26 
-thumbs-ups, with an average of 1.08 thumbs-ups per content generation.
+10 participants joined this pilot study. Here, we express our gratitude for
+their valuable feedback. Out of 36 times of content generation, we received 35 
+thumbs-ups, with an average of 0.97 thumbs-ups per content generation, which
+to some extent indicates the usefulness of this tool.
 We summarized their feedback into several points shown below:
 1. Generated questions and answers can help users determine whether the text
 contains misinformation. In most cases, users can find a very useful 
 (that can be directly used to determine whether there is misinformation) 
 question within the top four generated questions.
-2. Not sure what the "refresh" button is for. Follow-up: we renamed that button
-to "reset".
-3. It may be useful to have attributed summaries, similar to the new Bing, so
+2. The interface is very easy to understand and use.
+3. Not sure what the "refresh" button is for. Follow-up: we renamed that button
+to "reset". 
+4. It may be useful to have attributed summaries, similar to the new Bing, so
 that users can know what sources each generated sentence come from. Follow-up:
-we implemented this feature - attributed summarization.
-4. Sometimes, the retrieved documents are not relevant to the question. The 
+we implemented this feature - attributed summarization. 
+5. Sometimes, the retrieved documents are not relevant to the question. The 
 reason might be that Bing has relatively poorer performance with natural 
 questions than a set of keywords. For future work, we may add an additional 
 component to rewrite (transform) questions into keywords suitable for search 
-engines.
-5. The generation is slow. We notice that most of the generation time comes 
+engines. 
+6. The generation is slow. We notice that most of the generation time comes 
 from OpenAI services (mostly ChatGPT). And the generation time of ChatGPT is
 noticeably longer when there is high traffic in OpenAI services. We don't 
-have control over that.
-6. The "print" function of the web application does not work properly when 
+have control over that. 
+7. The "print" function of the web application does not work properly when 
 the sidebar is shown. This is an issue of the `streamlit` framework. We will
 follow up with their development team.
 
