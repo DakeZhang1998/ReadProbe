@@ -71,6 +71,9 @@ to prohibit malicious content, such as violence or hate.
 *\* We use the phrase "content generation" to refer to the process of generating questions
 and corresponding answers for a given user input.*
 
+*\*\* The "Relevance Ranking" component probably can be removed once GPT-4 API
+is released since GPT-4 supports up to 32k input tokens.*
+
 ## Installation Instructions
 
 This project depends on three third-party services: 
@@ -139,13 +142,12 @@ and we are happy to provide further assistance.
 ## Evaluation
 
 To empirically evaluate the effectiveness of this web app in real-life scenarios,
-we conducted a small-scale pilot user study by asking our friends to try using
-this tool.
+we conducted a small-scale pilot user study by asking our friends to give it a try.
 To mimic real use cases, we didn't provide additional context or explanations
 other than those shown in the web app itself.
-Here is our instruction for the pilot user study.
+Here are our instructions for the pilot user study.
 > We developed a tool to help users perform lateral reading 
-> using OpenAI services. Thanks for agreeing to participate in
+> using OpenAI and Bing services. Thanks for agreeing to participate in
 > this pilot user study. Some of your usage data will be collected 
 > anonymously. Please spend at least 10 minutes playing with this web
 > application: https://readprobe.streamlit.app/. 
@@ -154,21 +156,38 @@ Here is our instruction for the pilot user study.
 > very relevant or helpful.
 > You may choose to quit this study anytime.
 > Once finished, please contact us to provide feedback on what aspects 
-> you like or dislike this application. Thanks again for your valuable time.
+> you like or dislike. Thanks again for your valuable time.
 
-X participants joined this pilot study. Here, we express our gratitude to
-their valuable feedback. We summarized their feedback into several points
-shown below:
-- Positive
-  1. asdas
-- Negative
-  1. Gneration is slow.
+8 participants joined this pilot study. Here, we express our gratitude for
+their valuable feedback. Out of 24 times of content generation, we received 26 
+thumbs-ups, with an average of 1.08 thumbs-ups per content generation.
+We summarized their feedback into several points shown below:
+1. Generated questions and answers can help users determine whether the text
+contains misinformation. In most cases, users can find a very useful 
+(that can be directly used to determine whether there is misinformation) 
+question within the top four generated questions.
+2. Not sure what the "refresh" button is for. Follow-up: we renamed that button
+to "reset".
+3. It may be useful to have attributed summaries, similar to the new Bing, so
+that users can know what sources each generated sentence come from. Follow-up:
+we implemented this feature - attributed summarization.
+4. Sometimes, the retrieved documents are not relevant to the question. The 
+reason might be that Bing has relatively poorer performance with natural 
+questions than a set of keywords. For future work, we may add an additional 
+component to rewrite (transform) questions into keywords suitable for search 
+engines.
+5. The generation is slow. We notice that most of the generation time comes 
+from OpenAI services (mostly ChatGPT). And the generation time of ChatGPT is
+noticeably longer when there is high traffic in OpenAI services. We don't 
+have control over that.
+6. The "print" function of the web application does not work properly when 
+the sidebar is shown. This is an issue of the `streamlit` framework. We will
+follow up with their development team.
 
-Note that our friends may be biased to giving positive feedback. 
-A more formal and large-scale user study is required to demonstrate the 
+Note that our friends may be biased toward giving positive feedback. 
+A more formal and large-scale user study is required to demonstrate the actual
 usefulness of this tool.
 
-s
 ## :warning: Disclaimer
 
 Content generation in this web application is performed mainly by calling 
@@ -186,12 +205,3 @@ to report. Your valuable feedback is deeply appreciated.
 ## License
 
 This project is under the [GNU General Public License](LICENSE).
-
-Deliverables
-
-t the end of the hackathon, your team is asked to submit the following:
-
-A live prototype solution, and
-Hint: depending on the nature of your app, you may be able to deploy it for free at https://vercel.com/
-An open-source program with installation instructions uploaded to GitHub and licensed under GNU GPLv3.
-The source code should include a readme document that will (a) outline your solution, (b) describe all planned and implemented functionalities, (c) how your solution can be deployed to fight misinformation online and by whom and (d) whether and how you evaluated its effectiveness.
