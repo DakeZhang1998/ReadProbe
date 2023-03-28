@@ -7,8 +7,6 @@ from bs4 import BeautifulSoup
 from ftfy import fix_text
 from typing import List
 
-openai.api_key = st.secrets.openai_keys.key
-
 
 @st.cache_data(show_spinner=False)
 def bing_search(query, top_n=3):

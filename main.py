@@ -1,5 +1,6 @@
 import uuid
 import json
+import openai
 import streamlit as st
 from langdetect import detect
 
@@ -11,6 +12,15 @@ top_n = 3  # Top n search results from Bing will be used to generate answers.
 n_questions = 5  # The number of questions that ChatGPT needs to come up with.
 enable_logging = True  # Turn on or off whether to log user feedback to Google Forms.
 st.set_page_config(layout='wide')
+chatgpt_provider = 'openai'  # openai or azure
+
+if chatgpt_provider == 'openai':
+    openai.api_key = st.secrets.openai_keys.key
+elif chatgpt_provider == 'azure':
+    openai.api_type = 'azure'
+    openai.api_version = '2023-03-15-preview'
+    openai.api_base = st.secrets.azure_openai.api_base
+    openai.api_key = st.secrets.azure_openai.api_key
 
 
 # Some variables to control the execution of this program
