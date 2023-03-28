@@ -39,7 +39,7 @@ def bing_search(query, top_n=3):
 
 
 @st.cache_data(show_spinner=False)
-def generate_questions(input_text: str):
+def generate_questions(input_text: str, provider='openai'):
     # This function calls OpenAI APIs to generate a list of questions
     # based on the input text given by the user.
     messages = [
@@ -56,11 +56,20 @@ def generate_questions(input_text: str):
                                     f'self-sufficient (Do not have pronouns or attributes relying on the text, '
                                     f'they should be fully resolved and make complete sense independently).'}
     ]
-    completion = openai.ChatCompletion.create(
-        model='gpt-3.5-turbo',
-        messages=messages,
-        temperature=0.2,
-    )
+    if provider == 'openai':
+        completion = openai.ChatCompletion.create(
+            model='gpt-3.5-turbo',
+            messages=messages,
+            temperature=0.2,
+        )
+    elif provider == 'azure':
+        completion = openai.ChatCompletion.create(
+            engine='ChatGPT-3-5-Turbo',
+            messages=messages,
+            temperature=0.2,
+        )
+    else:
+        raise Exception(f'[ERROR] Unidentified ChatGPT Provider: {provider}')
     response = completion['choices'][0]['message']['content']
     responses = [line for line in response.split('\n') if line.strip() != '']
     questions = []
@@ -71,7 +80,7 @@ def generate_questions(input_text: str):
 
 
 @st.cache_data(show_spinner=False)
-def summarize(question: str, documents: List[str]):
+def summarize(question: str, documents: List[str], provider='openai'):
     # This function takes as input a pair of question and document to produce
     # a short summary to answer the question using the information in the document.
 
@@ -110,11 +119,20 @@ def summarize(question: str, documents: List[str]):
          'content': f'My question is "{question}" Cohesively and factually summarize the following documents to '
          f'answer my question.\n------\n{doc_texts}'}]
     # Ask ChatGPT to summarize the extracted chunks.
-    completion = openai.ChatCompletion.create(
-        model='gpt-3.5-turbo',
-        messages=messages,
-        temperature=0.2,
-    )
+    if provider == 'openai':
+        completion = openai.ChatCompletion.create(
+            model='gpt-3.5-turbo',
+            messages=messages,
+            temperature=0.2,
+        )
+    elif provider == 'azure':
+        completion = openai.ChatCompletion.create(
+            engine='ChatGPT-3-5-Turbo',
+            messages=messages,
+            temperature=0.2,
+        )
+    else:
+        raise Exception(f'[ERROR] Unidentified ChatGPT Provider: {provider}')
     response = completion['choices'][0]['message']['content']
     return response
 

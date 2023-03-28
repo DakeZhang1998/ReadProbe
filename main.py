@@ -108,7 +108,7 @@ if probe_button or st.session_state.generated == 1:
 
     # Generate questions
     with st.spinner('Generating questions ...'):
-        questions = modules.generate_questions(input_text)
+        questions = modules.generate_questions(input_text, provider=chatgpt_provider)
 
     # Search online and generate answers
     records = []
@@ -119,7 +119,7 @@ if probe_button or st.session_state.generated == 1:
                 search_result = modules.bing_search(question, top_n=top_n)
             with st.spinner('Generating answers ...'):
                 record.append([url for url, doc in search_result])
-                answer = modules.summarize(question, [doc for url, doc in search_result])
+                answer = modules.summarize(question, [doc for url, doc in search_result], provider=chatgpt_provider)
                 answer = str(answer).replace('$', '\\$')
                 record.append(answer)
                 seen = set()
