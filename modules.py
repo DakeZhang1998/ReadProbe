@@ -42,6 +42,7 @@ def bing_search(query, top_n=3):
 def generate_questions(input_text: str, provider='openai'):
     # This function calls OpenAI APIs to generate a list of questions
     # based on the input text given by the user.
+    print(openai.api_base)
     messages = [
         {'role': 'system',
          'content': 'You are a factual and helpful assistant to aid users in the lateral reading task. You will '
@@ -90,8 +91,14 @@ def summarize(question: str, documents: List[str], provider='openai'):
         words = document.split()
         chunks = [' '.join(words[(i * 256): ((i + 1) * 256)]) for i in range(len(words) // 256)]
         chunks.append(question)
-        response = openai.Embedding.create(input=chunks, model='text-embedding-ada-002')
-        embeddings = [response['data'][i]['embedding'] for i in range(len(chunks))]
+        if provider == 'openai':
+            response = openai.Embedding.create(input=chunks, model='text-embedding-ada-002')
+            embeddings = [response['data'][i]['embedding'] for i in range(len(chunks))]
+        elif provider == 'azure':
+            embeddings = []
+            for chunk in chunks:
+                response = openai.Embedding.create(input=chunk, engine='text-embedding-ada-002')
+                embeddings.append(response['data'][0]['embedding'])
         cosine_similarity_scores = []
         for i in range(len(chunks) - 1):
             cosine_similarity_scores.append(

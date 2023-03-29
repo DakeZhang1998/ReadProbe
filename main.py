@@ -12,9 +12,8 @@ top_n = 3  # Top n search results from Bing will be used to generate answers.
 n_questions = 5  # The number of questions that ChatGPT needs to come up with.
 enable_logging = True  # Turn on or off whether to log user feedback to Google Forms.
 st.set_page_config(layout='wide')
-chatgpt_provider = 'openai'  # openai or azure
 
-
+chatgpt_provider = 'azure'  # openai or azure
 if chatgpt_provider == 'openai':
     openai.api_key = st.secrets.openai_keys.key
 elif chatgpt_provider == 'azure':
@@ -97,7 +96,7 @@ if probe_button or st.session_state.generated == 1:
         if detect(input_text) != 'en':
             st.warning('Only English is supported for now. Please try another input.')
             st.stop()
-        if not modules.input_check(input_text):
+        if chatgpt_provider == 'openai' and not modules.input_check(input_text):
             st.warning('Your input may contain harmful content. Please try another input.')
             st.stop()
         if len(input_text.split()) < 10:
