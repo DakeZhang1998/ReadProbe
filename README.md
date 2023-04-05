@@ -1,6 +1,9 @@
 # ReadProbe
 **An AI-powered tool to support lateral reading.**
 
+The winning prototype in the
+[2023 Canadian #AI Misinformation Hackathon](https://socialmedialab.ca/events/hackathon/).
+
 ## About
 
 Lateral reading is a critical thinking approach used to evaluate the 
