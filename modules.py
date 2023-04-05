@@ -65,7 +65,7 @@ def generate_questions(input_text: str, provider='openai'):
         )
     elif provider == 'azure':
         completion = openai.ChatCompletion.create(
-            engine='ChatGPT-3-5-Turbo',
+            engine='gpt-4-32k',
             messages=messages,
             temperature=0.2,
         )
@@ -86,30 +86,10 @@ def summarize(question: str, documents: List[str], provider='openai'):
     # a short summary to answer the question using the information in the document.
 
     # Use embeddings to find relevant chunks.
-    document_extraction = []
-    for docind, document in enumerate(documents):
-        words = document.split()
-        chunks = [' '.join(words[(i * 256): ((i + 1) * 256)]) for i in range(len(words) // 256)]
-        chunks.append(question)
-        if provider == 'openai':
-            response = openai.Embedding.create(input=chunks, model='text-embedding-ada-002')
-            embeddings = [response['data'][i]['embedding'] for i in range(len(chunks))]
-        elif provider == 'azure':
-            embeddings = []
-            for chunk in chunks:
-                response = openai.Embedding.create(input=chunk, engine='text-embedding-ada-002')
-                embeddings.append(response['data'][0]['embedding'])
-        cosine_similarity_scores = []
-        for i in range(len(chunks) - 1):
-            cosine_similarity_scores.append(
-                np.dot(embeddings[-1], embeddings[i]) / (np.linalg.norm(embeddings[-1]) * np.linalg.norm(embeddings[i]))
-            )
-        cosine_similarity_scores = np.array(cosine_similarity_scores)
-        scores = np.array(cosine_similarity_scores)
-        sorted_indices = np.argsort(scores)[::-1]
-        for i, item in enumerate(sorted_indices[:2]):
-            document_extraction.append(fix_text(f'Document {docind + 1}: Relevant Segment {i + 1}: {chunks[item]}'))
-    doc_texts = '\n'.join(document_extraction)
+    concatenated_input = ''
+    for doc_id, document in enumerate(documents):
+        concatenated_input += f'Document {doc_id + 1}:\n{document[:40000]}'
+
     messages = [
         {'role': 'system',
          'content': 'You are a factual and helpful assistant designed to read and cohesively summarize segments from '
@@ -124,7 +104,7 @@ def summarize(question: str, documents: List[str], provider='openai'):
                     'results refer to different entities with the same name, cite them separately.'},
         {'role': 'user',
          'content': f'My question is "{question}" Cohesively and factually summarize the following documents to '
-         f'answer my question.\n------\n{doc_texts}'}]
+         f'answer my question.\n------\n{concatenated_input}'}]
     # Ask ChatGPT to summarize the extracted chunks.
     if provider == 'openai':
         completion = openai.ChatCompletion.create(
@@ -134,7 +114,7 @@ def summarize(question: str, documents: List[str], provider='openai'):
         )
     elif provider == 'azure':
         completion = openai.ChatCompletion.create(
-            engine='ChatGPT-3-5-Turbo',
+            engine='gpt-4-32k',
             messages=messages,
             temperature=0.2,
         )

@@ -59,7 +59,7 @@ with st.sidebar:
 # Building the main page
 st.markdown('# :bulb: ReadProbe [![GitHub-link](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo='
             'github&logoColor=white)](https://github.com/DakeZhang1998/ReadProbe)')
-st.markdown('An AI-powered tool to support **lateral reading**.')
+st.markdown('An AI-powered tool to support **lateral reading**. (NEW) Now GPT-4 is behind the scene!')
 st.markdown('### :pushpin: Instructions')
 st.markdown('Please read the information on the left before using this tool. The length of your input should be more '
             'than 10 words (enough context for meaningful generation) and less than 2000 words (due to the limit of '
@@ -133,7 +133,8 @@ if probe_button or st.session_state.generated == 1:
             for j in range(len(search_result)):
                 output = f'{j + 1}. {search_result[j][0]}'
                 if j not in seen:
-                    output = f'{output} (not leveraged in attribution but potentially relevant)'
+                    output = f'{output} (This source is not directly leveraged in attribution but could be ' \
+                             f'potentially relevant.)'
                 st.markdown(output)
             # User feedback: I like this one
             button = st.button(':thumbsup:  &nbsp; I like this one', key=f'thumbsup_for_q{i + 1}')
