@@ -1,3 +1,4 @@
+import time
 import uuid
 import openai
 import requests
@@ -106,20 +107,26 @@ def summarize(question: str, documents: List[str], provider='openai'):
          'content': f'My question is "{question}" Cohesively and factually summarize the following documents to '
          f'answer my question.\n------\n{concatenated_input}'}]
     # Ask ChatGPT to summarize the extracted chunks.
-    if provider == 'openai':
-        completion = openai.ChatCompletion.create(
-            model='gpt-3.5-turbo',
-            messages=messages,
-            temperature=0.2,
-        )
-    elif provider == 'azure':
-        completion = openai.ChatCompletion.create(
-            engine='gpt-4-32k',
-            messages=messages,
-            temperature=0.2,
-        )
-    else:
-        raise Exception(f'[ERROR] Unidentified ChatGPT Provider: {provider}')
+    while True:
+        try:
+            if provider == 'openai':
+                completion = openai.ChatCompletion.create(
+                    model='gpt-3.5-turbo',
+                    messages=messages,
+                    temperature=0.2,
+                )
+            elif provider == 'azure':
+                completion = openai.ChatCompletion.create(
+                    engine='gpt-4-32k',
+                    messages=messages,
+                    temperature=0.2,
+                )
+        except Exception as e:
+            print(f'[INFO] Exception: {e}. Retry in five seconds.')
+            time.sleep(5)
+            continue
+        break
+
     response = completion['choices'][0]['message']['content']
     return response
 
