@@ -120,6 +120,10 @@ if probe_button or st.session_state.generated == 1:
             with st.spinner('Generating answers ...'):
                 record.append([url for url, doc in search_result])
                 answer = modules.summarize(question, [doc for url, doc in search_result], provider=chatgpt_provider)
+                if len(answer) == 0:
+                    st.warning('Azure OpenAI servers are at capacity. Please try again later.')
+                    st.stop()
+                    modules.refresh(top_n=top_n)
                 answer = str(answer).replace('$', '\\$')
                 record.append(answer)
                 seen = set()

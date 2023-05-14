@@ -107,7 +107,8 @@ def summarize(question: str, documents: List[str], provider='openai'):
          'content': f'My question is "{question}" Cohesively and factually summarize the following documents to '
          f'answer my question.\n------\n{concatenated_input}'}]
     # Ask ChatGPT to summarize the extracted chunks.
-    while True:
+    retry_count = 0
+    while retry_count < 3:
         try:
             if provider == 'openai':
                 completion = openai.ChatCompletion.create(
@@ -123,12 +124,14 @@ def summarize(question: str, documents: List[str], provider='openai'):
                 )
         except Exception as e:
             print(f'[INFO] Exception: {e}. Retry in five seconds.')
-            time.sleep(5)
+            time.sleep(10)
             continue
         break
 
-    response = completion['choices'][0]['message']['content']
-    return response
+    if retry_count < 3:
+        return completion['choices'][0]['message']['content']
+    else:
+        return ''
 
 
 @st.cache_data(show_spinner=False)
