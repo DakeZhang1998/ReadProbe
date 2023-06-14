@@ -4,7 +4,7 @@
 The winning prototype in the
 [2023 Canadian #AI Misinformation Hackathon](https://socialmedialab.ca/events/hackathon/).
 
-A paper on this prototype is available on ArXiv: http://arxiv.org/abs/2306.07875
+A paper on this prototype is available on arXiv: http://arxiv.org/abs/2306.07875
 
 ## About
 
